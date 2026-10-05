@@ -45,7 +45,7 @@ const App = () => {
         }
 
       } catch (error: any) {
-        
+        // If server return 401. call refreshtoken api
         if (error.response?.status === 401){
           await refreshToken();
         }
