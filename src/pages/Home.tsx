@@ -1,9 +1,16 @@
 import React from 'react'
+import HomePageComponent from '../components/HomePageComponent'
 
-const Home = () => {
+interface HomeProps {
+  name?: string;
+  email?: string;
+  avatar?: string;
+} 
+
+const Home = ({ name, email, avatar }: HomeProps) => {
   return (
     <div>
-      home page
+      <HomePageComponent name={name} email={email} avatar={avatar} />
     </div>
   )
 }
