@@ -1,46 +1,52 @@
-
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
-
+import { Bot } from 'lucide-react';
 import Loader from './Loader';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const LoginPageComponent = () => {
+  const [loading, setLoading] = useState(false);
+  const [googleLoaded, setGoogleLoaded] = useState(false);
 
-    const [loading, setLoading] = useState(false);
+  // Force Google script appearance detection or slight timer for smooth skeleton fade
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setGoogleLoaded(true);
+    }, 400); // 400ms delay to smoothly reveal the button once internal iframe initializes
+    return () => clearTimeout(timer);
+  }, []);
 
   // Handle successful Google login response
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
-        setLoading(true);
+      setLoading(true);
       const token = credentialResponse.credential;
 
       // Send the token to backend API 
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, { token }, {withCredentials: true }
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+        { token },
+        { withCredentials: true }
       );
 
-      if (response.data.success){
+      if (response.data.success) {
         window.location.reload();
       }
-    
     } catch (error: any) {
-        //If any issue on server 
       console.error('Error sending token to backend:', error.response?.data || error.message);
-      
     } finally {
-        setLoading(false);
-    } 
+      setLoading(false);
+    }
   };
-
-  if (loading){
-    return <Loader />
-  }
 
   // Handle Google login failure
   const handleGoogleError = () => {
     console.log('Google Sign-In Failed');
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
@@ -55,25 +61,32 @@ const LoginPageComponent = () => {
           
           {/* Top Brand Name & Subtitle */}
           <div className="text-center mb-8 w-full">
-            <h1 className="m-0 mb-2 text-4xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent tracking-tight">
-              Onyxia AI
+            <h1 className="m-0 mb-2 text-4xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent tracking-tight flex items-center justify-center gap-2">
+              Onyxia AI <Bot className="text-cyan-400 w-8 h-8 inline-block" />
             </h1>
             <p className="m-0 text-sm text-slate-400 leading-normal">
               Welcome back! Please sign in to continue.
             </p>
           </div>
 
-          {/* Google Login Section */}
-          <div className="w-full flex justify-center mb-6">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              useOneTap
-              theme="outline"
-              size="large"
-              shape="pill"
-              width="100%"
-            />
+          {/* Google Login Section with Fixed Height & Skeleton Placeholder */}
+          <div className="w-full flex justify-center mb-6 min-h-[44px] relative">
+            {!googleLoaded && (
+              <div className="absolute inset-0 w-full h-[44px] bg-slate-700/50 animate-pulse rounded-full border border-white/5 flex items-center justify-center">
+                <span className="text-xs text-slate-400">Loading Google sign-in...</span>
+              </div>
+            )}
+            <div className={`w-full transition-opacity duration-300 ${googleLoaded ? 'opacity-100' : 'opacity-0'}`}>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                useOneTap
+                theme="outline"
+                size="large"
+                shape="pill"
+                width="100%"
+              />
+            </div>
           </div>
 
           {/* Footer inside card */}
