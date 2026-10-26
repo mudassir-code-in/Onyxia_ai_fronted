@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { FormEvent, KeyboardEvent } from 'react';
 import axios from 'axios';
 import { Send, LogOut, ChevronDown } from 'lucide-react';
