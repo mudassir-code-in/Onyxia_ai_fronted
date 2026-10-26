@@ -4,7 +4,7 @@ interface LoaderProps {
   message?: string;
 }
 
-const Loader: React.FC<LoaderProps> = ({ message = 'Loadin' }) => {
+const Loader: React.FC<LoaderProps> = ({ message = 'Loading' }) => {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0b0f19] text-gray-200 font-sans">
       <div className="flex flex-col items-center space-y-6">
