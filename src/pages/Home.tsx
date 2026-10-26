@@ -8,7 +8,7 @@ interface HomeProps {
 
 const Home = ({ name, email, avatar }: HomeProps) => {
   return (
-    <div>
+    <div className='h-screen'>
       <HomePageComponent name={name} email={email} avatar={avatar} />
     </div>
   )
