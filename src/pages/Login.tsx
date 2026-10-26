@@ -1,4 +1,3 @@
-import React from 'react'
 import LoginPageComponent from '../components/LoginPageCompnent'
 
 const Login = () => {
