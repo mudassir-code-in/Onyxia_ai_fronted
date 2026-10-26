@@ -134,7 +134,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#0b0f19] text-gray-200 font-sans overflow-hidden">
+  <div className="flex flex-col h-[100dvh] bg-[#0b0f19] text-gray-200 font-sans overflow-hidden">
       
       {/* Custom inline style to hide scrollbars cleanly across browsers */}
       <style>{`
@@ -148,7 +148,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
       `}</style>
 
       {/* ---------------- HEADER ---------------- */}
-      <header className="flex items-center justify-between px-6 py-3.5 bg-[#111827]/85 backdrop-blur-md border-b border-gray-800/80 sticky top-0 z-20">
+      <header className="flex items-center justify-between px-6 py-3.5 bg-[#111827]/85 backdrop-blur-md border-b border-gray-800/80 sticky top-0 z-20 shrink-0">
         <div className="flex items-center gap-3">
           <AILoader size="md" showText={false} isSpinning={false} />
           <div>
@@ -158,7 +158,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
               </span>
               <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-400 border border-cyan-800/50">
                 v1.0
-              </span>
+            </span>
             </div>
             <p className="text-[11px] text-gray-400">Next-Gen Intelligence Engine</p>
           </div>
@@ -212,7 +212,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
       {/* ---------------- CHAT MESSAGES AREA (Scrollbar Hidden) ---------------- */}
       <div 
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto no-scrollbar p-4 md:p-6 space-y-5 max-w-4xl w-full mx-auto"
+        className="flex-1 overflow-y-auto no-scrollbar p-4 md:p-6 space-y-5 max-w-4xl w-full mx-auto min-h-0"
       >
         {messages.map((msg, index) => (
           <div
@@ -251,7 +251,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
       </div>
 
       {/* ---------------- INPUT AREA ---------------- */}
-      <div className="p-4 max-w-4xl w-full mx-auto">
+      <div className="p-4 max-w-4xl w-full mx-auto shrink-0">
         <form onSubmit={handleSend} className="relative bg-[#161e2e] rounded-2xl border border-gray-700/60 focus-within:border-cyan-500/80 transition shadow-xl shadow-cyan-950/20">
           <textarea
             rows={1}
@@ -271,10 +271,10 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
               input.trim() && !loading
                 ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:opacity-90 shadow-md shadow-cyan-500/20'
                 : 'bg-gray-800 text-gray-500 cursor-not-allowed'
-            }`}
-          >
+        }`}
+        >
             <Send size={16} />
-          </button>
+        </button>
         </form>
         <p className="text-center text-[11px] text-gray-500 mt-2">
           Onyxia <span className="text-cyan-400 font-semibold">Is AI</span> Can Make Mistakes.
