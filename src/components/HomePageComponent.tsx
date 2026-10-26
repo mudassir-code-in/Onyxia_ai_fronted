@@ -36,13 +36,24 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   // Character limit for safety against high token usage (e.g., 2000 chars)
   const MAX_INPUT_LENGTH = 2000;
 
+  // Smart Scroll Logic (User upar padh raha ho toh scroll disturb nahi hoga)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const container = chatContainerRef.current;
+    if (!container) return;
+
+    const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 150;
+    const lastMessage = messages[messages.length - 1];
+    const isUserMessage = lastMessage?.role === 'user';
+
+    if (isNearBottom || isUserMessage) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages, loading]);
 
   useEffect(() => {
@@ -199,7 +210,10 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
       </header>
 
       {/* ---------------- CHAT MESSAGES AREA (Scrollbar Hidden) ---------------- */}
-      <div className="flex-1 overflow-y-auto no-scrollbar p-4 md:p-6 space-y-5 max-w-4xl w-full mx-auto">
+      <div 
+        ref={chatContainerRef}
+        className="flex-1 overflow-y-auto no-scrollbar p-4 md:p-6 space-y-5 max-w-4xl w-full mx-auto"
+      >
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -242,7 +256,6 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
           <textarea
             rows={1}
             value={input}
-            maxLength={MAX_INPUT_LENGTH}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask Onyxia anything..."
