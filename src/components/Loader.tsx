@@ -1,7 +1,10 @@
 import { Bot } from 'lucide-react';
 
+interface LoaderProps {
+  message?: string;
+}
 
-const Loader: React.FC<LoaderProps> = () => {
+const Loader: React.FC<LoaderProps> = ({ message = 'Loadin' }) => {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0b0f19] text-gray-200 font-sans">
       <div className="flex flex-col items-center space-y-6">
@@ -28,7 +31,7 @@ const Loader: React.FC<LoaderProps> = () => {
         {/* ---------------- TEXT & BOUNCING DOTS ---------------- */}
         <div className="bg-[#161e2e] text-gray-300 px-5 py-2.5 rounded-2xl text-xs border border-gray-800/80 flex items-center gap-2 shadow-lg">
           <span className="flex items-center gap-1.5 font-medium">
-            Loading
+            {message}
             <span className="flex gap-1 ml-1.5">
               <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
               <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
