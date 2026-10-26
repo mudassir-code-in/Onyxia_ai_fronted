@@ -65,7 +65,7 @@ const LoginPageComponent = () => {
               Onyxia AI <Bot className="text-cyan-400 w-8 h-8 inline-block" />
             </h1>
             <p className="m-0 text-sm text-slate-400 leading-normal">
-              Welcome back! Please sign in to continue.
+               Please sign in to continue.
             </p>
           </div>
 
@@ -91,7 +91,7 @@ const LoginPageComponent = () => {
 
           {/* Footer inside card */}
           <div className="mt-2 text-center text-xs tracking-wider">
-            <span className="text-slate-500">powered by </span>
+            <span className="text-slate-500">Created by </span>
             <span className="text-slate-300 font-semibold">Mudassir</span>
           </div>
 
