@@ -134,8 +134,8 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
   };
 
   return (
-  <div className="flex flex-col h-[100dvh] bg-[#0b0f19] text-gray-200 font-sans overflow-hidden">
-      
+    <div className="flex flex-col h-[100dvh] bg-[#0b0f19] text-gray-200 font-sans overflow-hidden">
+
       {/* Custom inline style to hide scrollbars cleanly across browsers */}
       <style>{`
         .no-scrollbar::-webkit-scrollbar {
@@ -153,12 +153,12 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
           <AILoader size="md" showText={false} isSpinning={false} />
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent tracking-wide">
+              <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent tracking-wide">
                 Onyxia<span className="text-cyan-400">.ai</span>
-              </span>
+              </h1>
               <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-400 border border-cyan-800/50">
                 v1.0
-            </span>
+              </span>
             </div>
             <p className="text-[11px] text-gray-400">Next-Gen Intelligence Engine</p>
           </div>
@@ -210,7 +210,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
       </header>
 
       {/* ---------------- CHAT MESSAGES AREA (Scrollbar Hidden) ---------------- */}
-      <div 
+      <div
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto no-scrollbar p-4 md:p-6 space-y-5 max-w-4xl w-full mx-auto min-h-0"
       >
@@ -226,11 +226,10 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
             )}
 
             <div
-              className={`max-w-[85%] md:max-w-[82%] px-4 py-3 rounded-2xl text-sm leading-relaxed overflow-x-auto ${
-                msg.role === 'user'
+              className={`max-w-[85%] md:max-w-[82%] px-4 py-3 rounded-2xl text-sm leading-relaxed overflow-x-auto ${msg.role === 'user'
                   ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-tr-none shadow-md shadow-indigo-600/20 whitespace-pre-wrap'
                   : 'bg-[#161e2e] text-gray-200 border border-gray-800 rounded-tl-none shadow-sm prose prose-invert max-w-none'
-              }`}
+                }`}
             >
               {msg.role === 'user' ? (
                 msg.content
@@ -267,14 +266,13 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
           <button
             type="submit"
             disabled={!input.trim() || loading}
-            className={`absolute right-3 bottom-2.5 p-2 rounded-xl transition ${
-              input.trim() && !loading
+            className={`absolute right-3 bottom-2.5 p-2 rounded-xl transition ${input.trim() && !loading
                 ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:opacity-90 shadow-md shadow-cyan-500/20'
                 : 'bg-gray-800 text-gray-500 cursor-not-allowed'
-        }`}
-        >
+              }`}
+          >
             <Send size={16} />
-        </button>
+          </button>
         </form>
         <p className="text-center text-[11px] text-gray-500 mt-2">
           Onyxia <span className="text-cyan-400 font-semibold">Is AI</span> Can Make Mistakes.
