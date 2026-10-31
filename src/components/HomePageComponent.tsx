@@ -269,7 +269,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
         ))}
 
         {loading && (
-          <AILoader size="sm" message="Onyxia is generating a response" isSpinning={true} />
+          <AILoader size="sm" message="is generating a response" isSpinning={true} />
         )}
 
         <div ref={messagesEndRef} />
