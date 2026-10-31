@@ -236,24 +236,26 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
 
             <div
               className={`relative group max-w-[85%] md:max-w-[82%] px-4 py-3 rounded-2xl text-sm leading-relaxed overflow-x-auto ${msg.role === 'user'
-                  ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-tr-none shadow-md shadow-indigo-600/20 whitespace-pre-wrap'
+                  ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-tr-none shadow-md shadow-indigo-600/20 whitespace-pre-wrap pr-10'
                   : 'bg-[#161e2e] text-gray-200 border border-gray-800 rounded-tl-none shadow-sm prose prose-invert max-w-none pr-10'
                 }`}
             >
-              {/* Copy Button for Assistant Message */}
-              {msg.role === 'assistant' && (
-                <button
-                  onClick={() => handleCopy(msg.content, index)}
-                  title="Copy response"
-                  className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700/60 text-gray-400 hover:text-cyan-400 opacity-0 group-hover:opacity-100 transition-all duration-200"
-                >
-                  {copiedIndex === index ? (
-                    <Check size={14} className="text-emerald-400" />
-                  ) : (
-                    <Copy size={14} />
-                  )}
-                </button>
-              )}
+              {/* Copy Button for both User and Assistant Messages */}
+              <button
+                onClick={() => handleCopy(msg.content, index)}
+                title="Copy message"
+                className={`absolute top-2.5 right-2.5 p-1.5 rounded-lg border opacity-0 group-hover:opacity-100 transition-all duration-200 ${
+                  msg.role === 'user'
+                    ? 'bg-indigo-700/80 hover:bg-indigo-800/80 border-indigo-500/40 text-indigo-200 hover:text-white'
+                    : 'bg-gray-800/80 hover:bg-gray-700/80 border-gray-700/60 text-gray-400 hover:text-cyan-400'
+                }`}
+              >
+                {copiedIndex === index ? (
+                  <Check size={14} className={msg.role === 'user' ? 'text-white' : 'text-emerald-400'} />
+                ) : (
+                  <Copy size={14} />
+                )}
+              </button>
 
               {msg.role === 'user' ? (
                 msg.content
