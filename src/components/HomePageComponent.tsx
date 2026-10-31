@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { FormEvent, KeyboardEvent } from 'react';
 import axios from 'axios';
-import { Send, LogOut, ChevronDown } from 'lucide-react';
+import { Send, LogOut, ChevronDown, Copy, Check } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AILoader from './AILoader';
@@ -34,6 +34,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
   const [input, setInput] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -42,7 +43,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
   // Character limit for safety against high token usage (e.g., 2000 chars)
   const MAX_INPUT_LENGTH = 2000;
 
-  // Smart Scroll Logic (User upar padh raha ho toh scroll disturb nahi hoga)
+  // Smart Scroll Logic
   useEffect(() => {
     const container = chatContainerRef.current;
     if (!container) return;
@@ -78,6 +79,14 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
       console.error('Logout error:', error);
       window.location.href = '/login';
     }
+  };
+
+  const handleCopy = (text: string, index: number) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
+    setTimeout(() => {
+      setCopiedIndex(null);
+    }, 2000);
   };
 
   const handleSend = async (e?: FormEvent) => {
@@ -157,7 +166,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
                 Onyxia<span className="text-cyan-400">.ai</span>
               </h1>
               <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-400 border border-cyan-800/50">
-                v1.0
+                v2.0
               </span>
             </div>
             <p className="text-[11px] text-gray-400">Next-Gen Intelligence Engine</p>
@@ -226,11 +235,26 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
             )}
 
             <div
-              className={`max-w-[85%] md:max-w-[82%] px-4 py-3 rounded-2xl text-sm leading-relaxed overflow-x-auto ${msg.role === 'user'
+              className={`relative group max-w-[85%] md:max-w-[82%] px-4 py-3 rounded-2xl text-sm leading-relaxed overflow-x-auto ${msg.role === 'user'
                   ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-tr-none shadow-md shadow-indigo-600/20 whitespace-pre-wrap'
-                  : 'bg-[#161e2e] text-gray-200 border border-gray-800 rounded-tl-none shadow-sm prose prose-invert max-w-none'
+                  : 'bg-[#161e2e] text-gray-200 border border-gray-800 rounded-tl-none shadow-sm prose prose-invert max-w-none pr-10'
                 }`}
             >
+              {/* Copy Button for Assistant Message */}
+              {msg.role === 'assistant' && (
+                <button
+                  onClick={() => handleCopy(msg.content, index)}
+                  title="Copy response"
+                  className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700/60 text-gray-400 hover:text-cyan-400 opacity-0 group-hover:opacity-100 transition-all duration-200"
+                >
+                  {copiedIndex === index ? (
+                    <Check size={14} className="text-emerald-400" />
+                  ) : (
+                    <Copy size={14} />
+                  )}
+                </button>
+              )}
+
               {msg.role === 'user' ? (
                 msg.content
               ) : (
