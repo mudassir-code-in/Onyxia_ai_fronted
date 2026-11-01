@@ -39,8 +39,9 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  // Character limit for safety against high token usage (e.g., 2000 chars)
+  // Character limit for safety against high token usage (2000 chars)
   const MAX_INPUT_LENGTH = 2000;
 
   // Smart Scroll Logic
@@ -66,6 +67,14 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Auto-resize textarea logic as user types
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 144)}px`;
+    }
+  }, [input]);
 
   const handleLogout = async () => {
     try {
@@ -157,7 +166,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
       `}</style>
 
       {/* ---------------- HEADER ---------------- */}
-      <header className="flex items-center justify-between px-6 py-3.5 bg-[#111827]/85 backdrop-blur-md border-b border-gray-800/80 sticky top-0 z-20 shrink-0">
+      <header className="flex items-center justify-between px-4 md:px-6 py-3.5 bg-[#111827]/85 backdrop-blur-md border-b border-gray-800/80 sticky top-0 z-20 shrink-0">
         <div className="flex items-center gap-3">
           <AILoader size="md" showText={false} isSpinning={false} />
           <div>
@@ -190,7 +199,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
                 {name ? name.charAt(0).toUpperCase() : 'U'}
               </div>
             )}
-            <span className="text-xs font-semibold text-gray-100 pr-0.5">
+            <span className="text-xs font-semibold text-gray-100 pr-0.5 max-w-[80px] sm:max-w-none truncate">
               {name || 'User'}
             </span>
             <ChevronDown size={14} className={`text-gray-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
@@ -240,7 +249,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
                   : 'bg-[#161e2e] text-gray-200 border border-gray-800 rounded-tl-none shadow-sm prose prose-invert max-w-none pr-10'
                 }`}
             >
-              {/* Copy Button: Always visible on mobile, visible on hover for desktop (sm:opacity-0 sm:group-hover:opacity-100) */}
+              {/* Copy Button */}
               <button
                 onClick={() => handleCopy(msg.content, index)}
                 title="Copy message"
@@ -276,23 +285,28 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
       </div>
 
       {/* ---------------- INPUT AREA ---------------- */}
-      <div className="p-4 max-w-4xl w-full mx-auto shrink-0">
-        <form onSubmit={handleSend} className="relative bg-[#161e2e] rounded-2xl border border-gray-700/60 focus-within:border-cyan-500/80 transition shadow-xl shadow-cyan-950/20">
+      <div className="p-3 md:p-4 max-w-4xl w-full mx-auto shrink-0">
+        <form onSubmit={handleSend} className="relative bg-[#161e2e] rounded-2xl border border-gray-700/60 focus-within:border-cyan-500/80 transition shadow-xl shadow-cyan-950/20 flex items-center">
           <textarea
+            ref={textareaRef}
             rows={1}
+            maxLength={MAX_INPUT_LENGTH}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask Onyxia anything..."
-            className="w-full bg-transparent text-gray-100 placeholder-gray-500 px-4 py-3.5 pr-20 focus:outline-none resize-none text-sm min-h-[52px] max-h-36 no-scrollbar"
+            className="w-full bg-transparent text-gray-100 placeholder-gray-500 pl-4 pr-[100px] py-3.5 focus:outline-none resize-none text-sm min-h-[52px] max-h-36 no-scrollbar"
           />
-          <div className="absolute right-12 bottom-3.5 text-[10px] text-gray-500 select-none pointer-events-none hidden sm:block">
+          
+          {/* Character counter (Visible on both mobile & desktop) */}
+          <div className="absolute right-12 bottom-3 text-[10px] text-gray-500 select-none pointer-events-none font-mono">
             {input.length}/{MAX_INPUT_LENGTH}
           </div>
+
           <button
             type="submit"
             disabled={!input.trim() || loading}
-            className={`absolute right-3 bottom-2.5 p-2 rounded-xl transition ${input.trim() && !loading
+            className={`absolute right-2.5 bottom-2.5 p-2 rounded-xl transition ${input.trim() && !loading
                 ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:opacity-90 shadow-md shadow-cyan-500/20'
                 : 'bg-gray-800 text-gray-500 cursor-not-allowed'
               }`}
