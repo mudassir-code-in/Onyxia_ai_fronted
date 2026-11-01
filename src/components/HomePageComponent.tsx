@@ -240,11 +240,11 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
                   : 'bg-[#161e2e] text-gray-200 border border-gray-800 rounded-tl-none shadow-sm prose prose-invert max-w-none pr-10'
                 }`}
             >
-              {/* Copy Button for both User and Assistant Messages */}
+              {/* Copy Button: Always visible on mobile, visible on hover for desktop (sm:opacity-0 sm:group-hover:opacity-100) */}
               <button
                 onClick={() => handleCopy(msg.content, index)}
                 title="Copy message"
-                className={`absolute top-2.5 right-2.5 p-1.5 rounded-lg border opacity-0 group-hover:opacity-100 transition-all duration-200 ${
+                className={`absolute top-2.5 right-2.5 p-1.5 rounded-lg border opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 ${
                   msg.role === 'user'
                     ? 'bg-indigo-700/80 hover:bg-indigo-800/80 border-indigo-500/40 text-indigo-200 hover:text-white'
                     : 'bg-gray-800/80 hover:bg-gray-700/80 border-gray-700/60 text-gray-400 hover:text-cyan-400'
