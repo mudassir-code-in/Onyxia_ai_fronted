@@ -4,9 +4,9 @@ import axios from 'axios';
 import { Send, LogOut, ChevronDown, Copy, Check } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';      
-import rehypeKatex from 'rehype-katex';    
-import 'katex/dist/katex.min.css';         
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 import AILoader from './AILoader';
 
 interface HomePageComponentProps {
@@ -26,6 +26,14 @@ interface ApiResponse {
   response?: string;
   message?: string;
 }
+
+const preprocessMath = (content: string) => {
+  if (!content) return '';
+  return content
+    .replace(/\u00A0/g, ' ') 
+    .replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => `$$${math}$$`)
+    .replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => `$${math}$`);
+};
 
 const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
   const [messages, setMessages] = useState<Message[]>([
@@ -258,7 +266,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
                   remarkPlugins={[remarkGfm, remarkMath]}
                   rehypePlugins={[rehypeKatex]}
                 >
-                  {msg.content}
+                  {preprocessMath(msg.content)}
                 </ReactMarkdown>
               )}
             </div>
