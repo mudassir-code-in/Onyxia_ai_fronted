@@ -30,6 +30,7 @@ interface ApiResponse {
 const preprocessMath = (content: string) => {
   if (!content) return '';
   return content
+    .replace(/\u00A0/g, ' ') 
     .replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => `$$${math}$$`)
     .replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => `$${math}$`);
 };
