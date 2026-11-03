@@ -4,6 +4,9 @@ import axios from 'axios';
 import { Send, LogOut, ChevronDown, Copy, Check } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';      
+import rehypeKatex from 'rehype-katex';    
+import 'katex/dist/katex.min.css';         
 import AILoader from './AILoader';
 
 interface HomePageComponentProps {
@@ -41,10 +44,8 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  // Character limit for safety against high token usage (2000 chars)
   const MAX_INPUT_LENGTH = 2000;
 
-  // Smart Scroll Logic
   useEffect(() => {
     const container = chatContainerRef.current;
     if (!container) return;
@@ -68,7 +69,6 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Auto-resize textarea logic as user types
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -106,7 +106,6 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
     if (userMessage.length > MAX_INPUT_LENGTH) return;
 
     setInput('');
-
     setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
     setLoading(true);
 
@@ -153,19 +152,12 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
 
   return (
     <div className="flex flex-col h-[100dvh] bg-[#0b0f19] text-gray-200 font-sans overflow-hidden">
-
-      {/* Custom inline style to hide scrollbars cleanly across browsers */}
       <style>{`
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
-      {/* ---------------- HEADER ---------------- */}
+      {/* HEADER */}
       <header className="flex items-center justify-between px-4 md:px-6 py-3.5 bg-[#111827]/85 backdrop-blur-md border-b border-gray-800/80 sticky top-0 z-20 shrink-0">
         <div className="flex items-center gap-3">
           <AILoader size="md" showText={false} isSpinning={false} />
@@ -182,18 +174,13 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
           </div>
         </div>
 
-        {/* User Profile Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <div
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="flex items-center gap-2.5 bg-[#1e293b]/60 px-3 py-1.5 rounded-full border border-gray-700/50 shadow-inner cursor-pointer hover:border-cyan-500/50 transition select-none"
           >
             {avatar ? (
-              <img
-                src={avatar}
-                alt={name || 'User'}
-                className="w-7 h-7 rounded-full object-cover border border-indigo-500/50"
-              />
+              <img src={avatar} alt={name || 'User'} className="w-7 h-7 rounded-full object-cover border border-indigo-500/50" />
             ) : (
               <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow">
                 {name ? name.charAt(0).toUpperCase() : 'U'}
@@ -206,12 +193,10 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
           </div>
 
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-64 bg-[#161e2e] border border-gray-700/80 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95">
+            <div className="absolute right-0 mt-2 w-64 bg-[#161e2e] border border-gray-700/80 rounded-2xl shadow-2xl py-2 z-50">
               <div className="px-4 py-2.5 border-b border-gray-800">
                 <p className="text-[11px] text-gray-400">Signed in as</p>
-                <p className="text-xs font-semibold text-gray-200 truncate mt-0.5">
-                  {email}
-                </p>
+                <p className="text-xs font-semibold text-gray-200 truncate mt-0.5">{email}</p>
               </div>
               <div className="p-1 mt-1">
                 <button
@@ -227,7 +212,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
         </div>
       </header>
 
-      {/* ---------------- CHAT MESSAGES AREA (Scrollbar Hidden) ---------------- */}
+      {/* CHAT MESSAGES AREA */}
       <div
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto no-scrollbar p-4 md:p-6 space-y-5 max-w-4xl w-full mx-auto min-h-0"
@@ -244,12 +229,12 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
             )}
 
             <div
-              className={`relative group max-w-[85%] md:max-w-[82%] px-4 py-3 rounded-2xl text-sm leading-relaxed overflow-x-auto ${msg.role === 'user'
+              className={`relative group max-w-[85%] md:max-w-[82%] px-4 py-3 rounded-2xl text-sm leading-relaxed overflow-x-auto ${
+                msg.role === 'user'
                   ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-tr-none shadow-md shadow-indigo-600/20 whitespace-pre-wrap pr-10'
                   : 'bg-[#161e2e] text-gray-200 border border-gray-800 rounded-tl-none shadow-sm prose prose-invert max-w-none pr-10'
-                }`}
+              }`}
             >
-              {/* Copy Button */}
               <button
                 onClick={() => handleCopy(msg.content, index)}
                 title="Copy message"
@@ -269,7 +254,10 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
               {msg.role === 'user' ? (
                 msg.content
               ) : (
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
+                >
                   {msg.content}
                 </ReactMarkdown>
               )}
@@ -284,7 +272,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* ---------------- INPUT AREA ---------------- */}
+      {/* INPUT AREA */}
       <div className="p-3 md:p-4 max-w-4xl w-full mx-auto shrink-0">
         <form onSubmit={handleSend} className="relative bg-[#161e2e] rounded-2xl border border-gray-700/60 focus-within:border-cyan-500/80 transition shadow-xl shadow-cyan-950/20 flex items-center">
           <textarea
@@ -298,7 +286,6 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
             className="w-full bg-transparent text-gray-100 placeholder-gray-500 pl-4 pr-[100px] py-3.5 focus:outline-none resize-none text-sm min-h-[52px] max-h-36 no-scrollbar"
           />
           
-          {/* Character counter (Visible on both mobile & desktop) */}
           <div className="absolute right-12 bottom-3 text-[10px] text-gray-500 select-none pointer-events-none font-mono">
             {input.length}/{MAX_INPUT_LENGTH}
           </div>
@@ -306,10 +293,11 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
           <button
             type="submit"
             disabled={!input.trim() || loading}
-            className={`absolute right-2.5 bottom-2.5 p-2 rounded-xl transition ${input.trim() && !loading
+            className={`absolute right-2.5 bottom-2.5 p-2 rounded-xl transition ${
+              input.trim() && !loading
                 ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:opacity-90 shadow-md shadow-cyan-500/20'
                 : 'bg-gray-800 text-gray-500 cursor-not-allowed'
-              }`}
+            }`}
           >
             <Send size={16} />
           </button>
@@ -318,7 +306,6 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
           Onyxia <span className="text-cyan-400 font-semibold">Is AI</span> Can Make Mistakes.
         </p>
       </div>
-
     </div>
   );
 };
