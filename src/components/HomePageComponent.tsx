@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { FormEvent, KeyboardEvent } from 'react';
 import axios from 'axios';
-import { Send, LogOut, ChevronDown, Copy, Check } from 'lucide-react';
+import { Send, LogOut, ChevronDown, Copy, Check, Sun, Moon } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AILoader from './AILoader';
@@ -35,6 +35,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [darkMode, setDarkMode] = useState<boolean>(true);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -152,7 +153,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
   };
 
   return (
-    <div className="flex flex-col h-[100dvh] bg-[#0b0f19] text-gray-200 font-sans overflow-hidden">
+    <div className={`flex flex-col h-[100dvh] font-sans overflow-hidden transition-colors duration-200 ${darkMode ? 'bg-[#0b0f19] text-gray-200' : 'bg-gray-50 text-gray-800'}`}>
 
       {/* Custom inline style to hide scrollbars cleanly across browsers */}
       <style>{`
@@ -166,7 +167,7 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
       `}</style>
 
       {/* ---------------- HEADER ---------------- */}
-      <header className="flex items-center justify-between px-4 md:px-6 py-3.5 bg-[#111827]/85 backdrop-blur-md border-b border-gray-800/80 sticky top-0 z-20 shrink-0">
+      <header className={`flex items-center justify-between px-4 md:px-6 py-3.5 backdrop-blur-md border-b sticky top-0 z-20 shrink-0 transition-colors duration-200 ${darkMode ? 'bg-[#111827]/85 border-gray-800/80' : 'bg-white/85 border-gray-200'}`}>
         <div className="flex items-center gap-3">
           <AILoader size="md" showText={false} isSpinning={false} />
           <div>
@@ -178,52 +179,70 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
                 v2.0
               </span>
             </div>
-            <p className="text-[11px] text-gray-400">Next-Gen Intelligence Engine</p>
+            <p className={`text-[11px] ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Next-Gen Intelligence Engine</p>
           </div>
         </div>
 
-        {/* User Profile Dropdown */}
-        <div className="relative" ref={dropdownRef}>
-          <div
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2.5 bg-[#1e293b]/60 px-3 py-1.5 rounded-full border border-gray-700/50 shadow-inner cursor-pointer hover:border-cyan-500/50 transition select-none"
+        {/* Right side controls: Theme Toggle & User Profile */}
+        <div className="flex items-center gap-3">
+          {/* Dark / Light Mode Toggle Button */}
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            className={`p-2 rounded-full border transition-all duration-200 ${darkMode
+                ? 'bg-[#1e293b]/60 border-gray-700/50 text-cyan-400 hover:border-cyan-500/50'
+                : 'bg-gray-100 border-gray-200 text-amber-500 hover:border-amber-400'
+              }`}
           >
-            {avatar ? (
-              <img
-                src={avatar}
-                alt={name || 'User'}
-                className="w-7 h-7 rounded-full object-cover border border-indigo-500/50"
-              />
-            ) : (
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow">
-                {name ? name.charAt(0).toUpperCase() : 'U'}
+            {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+
+          {/* User Profile Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <div
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className={`flex items-center gap-2.5 px-3 py-1.5 rounded-full border shadow-inner cursor-pointer transition select-none ${darkMode
+                  ? 'bg-[#1e293b]/60 border-gray-700/50 hover:border-cyan-500/50'
+                  : 'bg-white border-gray-200 hover:border-cyan-400'
+                }`}
+            >
+              {avatar ? (
+                <img
+                  src={avatar}
+                  alt={name || 'User'}
+                  className="w-7 h-7 rounded-full object-cover border border-indigo-500/50"
+                />
+              ) : (
+                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow">
+                  {name ? name.charAt(0).toUpperCase() : 'U'}
+                </div>
+              )}
+              <span className={`text-xs font-semibold pr-0.5 max-w-[80px] sm:max-w-none truncate ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>
+                {name || 'User'}
+              </span>
+              <ChevronDown size={14} className={`text-gray-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+            </div>
+
+            {dropdownOpen && (
+              <div className={`absolute right-0 mt-2 w-64 border rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 ${darkMode ? 'bg-[#161e2e] border-gray-700/80' : 'bg-white border-gray-200'}`}>
+                <div className={`px-4 py-2.5 border-b ${darkMode ? 'border-gray-800' : 'border-gray-100'}`}>
+                  <p className={`text-[11px] ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Signed in as</p>
+                  <p className={`text-xs font-semibold truncate mt-0.5 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                    {email}
+                  </p>
+                </div>
+                <div className="p-1 mt-1">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-red-400 hover:bg-red-500/10 rounded-xl transition text-left"
+                  >
+                    <LogOut size={15} />
+                    <span>Logout</span>
+                  </button>
+                </div>
               </div>
             )}
-            <span className="text-xs font-semibold text-gray-100 pr-0.5 max-w-[80px] sm:max-w-none truncate">
-              {name || 'User'}
-            </span>
-            <ChevronDown size={14} className={`text-gray-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
           </div>
-
-          {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-64 bg-[#161e2e] border border-gray-700/80 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95">
-              <div className="px-4 py-2.5 border-b border-gray-800">
-                <p className="text-[11px] text-gray-400">Signed in as</p>
-                <p className="text-xs font-semibold text-gray-200 truncate mt-0.5">
-                  {email}
-                </p>
-              </div>
-              <div className="p-1 mt-1">
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-red-400 hover:bg-red-500/10 rounded-xl transition text-left"
-                >
-                  <LogOut size={15} />
-                  <span>Logout</span>
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </header>
 
@@ -246,18 +265,21 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
             <div
               className={`relative group max-w-[85%] md:max-w-[82%] px-4 py-3 rounded-2xl text-sm leading-relaxed overflow-x-auto ${msg.role === 'user'
                   ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-tr-none shadow-md shadow-indigo-600/20 whitespace-pre-wrap pr-10'
-                  : 'bg-[#161e2e] text-gray-200 border border-gray-800 rounded-tl-none shadow-sm prose prose-invert max-w-none pr-10'
+                  : darkMode
+                    ? 'bg-[#161e2e] text-gray-200 border border-gray-800 rounded-tl-none shadow-sm prose prose-invert max-w-none pr-10'
+                    : 'bg-white text-gray-800 border border-gray-200 rounded-tl-none shadow-sm prose max-w-none pr-10'
                 }`}
             >
               {/* Copy Button */}
               <button
                 onClick={() => handleCopy(msg.content, index)}
                 title="Copy message"
-                className={`absolute top-2.5 right-2.5 p-1.5 rounded-lg border opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 ${
-                  msg.role === 'user'
+                className={`absolute top-2.5 right-2.5 p-1.5 rounded-lg border opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 ${msg.role === 'user'
                     ? 'bg-indigo-700/80 hover:bg-indigo-800/80 border-indigo-500/40 text-indigo-200 hover:text-white'
-                    : 'bg-gray-800/80 hover:bg-gray-700/80 border-gray-700/60 text-gray-400 hover:text-cyan-400'
-                }`}
+                    : darkMode
+                      ? 'bg-gray-800/80 hover:bg-gray-700/80 border-gray-700/60 text-gray-400 hover:text-cyan-400'
+                      : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-500 hover:text-cyan-600'
+                  }`}
               >
                 {copiedIndex === index ? (
                   <Check size={14} className={msg.role === 'user' ? 'text-white' : 'text-emerald-400'} />
@@ -286,7 +308,13 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
 
       {/* ---------------- INPUT AREA ---------------- */}
       <div className="p-3 md:p-4 max-w-4xl w-full mx-auto shrink-0">
-        <form onSubmit={handleSend} className="relative bg-[#161e2e] rounded-2xl border border-gray-700/60 focus-within:border-cyan-500/80 transition shadow-xl shadow-cyan-950/20 flex items-center">
+        <form
+          onSubmit={handleSend}
+          className={`relative rounded-2xl border transition shadow-xl flex items-center ${darkMode
+              ? 'bg-[#161e2e] border-gray-700/60 focus-within:border-cyan-500/80 shadow-cyan-950/20'
+              : 'bg-white border-gray-300 focus-within:border-cyan-500 shadow-gray-200'
+            }`}
+        >
           <textarea
             ref={textareaRef}
             rows={1}
@@ -295,9 +323,9 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask Onyxia anything..."
-            className="w-full bg-transparent text-gray-100 placeholder-gray-500 pl-4 pr-[100px] py-3.5 focus:outline-none resize-none text-sm min-h-[52px] max-h-36 no-scrollbar"
+            className={`w-full bg-transparent placeholder-gray-500 pl-4 pr-[100px] py-3.5 focus:outline-none resize-none text-sm min-h-[52px] max-h-36 no-scrollbar ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}
           />
-          
+
           {/* Character counter (Visible on both mobile & desktop) */}
           <div className="absolute right-12 bottom-3 text-[10px] text-gray-500 select-none pointer-events-none font-mono">
             {input.length}/{MAX_INPUT_LENGTH}
@@ -307,14 +335,14 @@ const HomePageComponent = ({ name, email, avatar }: HomePageComponentProps) => {
             type="submit"
             disabled={!input.trim() || loading}
             className={`absolute right-2.5 bottom-2.5 p-2 rounded-xl transition ${input.trim() && !loading
-                ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:opacity-90 shadow-md shadow-cyan-500/20'
-                : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+              ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white hover:opacity-90 shadow-md shadow-cyan-500/20'
+              : 'bg-gray-800 text-gray-500 cursor-not-allowed'
               }`}
           >
             <Send size={16} />
           </button>
         </form>
-        <p className="text-center text-[11px] text-gray-500 mt-2">
+        <p className={`text-center text-[11px] mt-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
           Onyxia <span className="text-cyan-400 font-semibold">Is AI</span> Can Make Mistakes.
         </p>
       </div>
